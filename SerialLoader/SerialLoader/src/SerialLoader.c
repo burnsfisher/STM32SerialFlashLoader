@@ -17,7 +17,7 @@
  * s Status for debugging
  */
 
-#include "hardwareDefinitions.h"
+//#include "hardwareDefinitions.h"
 #include "ao_timer.h"
 #include "ao_stm32l.h"
 #include "ao_flash.h"

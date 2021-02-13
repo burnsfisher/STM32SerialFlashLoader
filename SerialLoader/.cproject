@@ -30,10 +30,11 @@
 									<listOptionValue builtIn="false" value="STM32L151xE"/>
 								</option>
 								<option id="com.atollic.truestudio.as.general.incpath.79093399" name="Include path" superClass="com.atollic.truestudio.as.general.incpath" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="../src"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32L1xx/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/STM32L1xx_HAL_Driver/Inc"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/GolfSerialLoader/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/GolfSerialLoader/SerialLoader/inc}&quot;"/>
 								</option>
 								<option id="com.atollic.truestudio.common_options.target.interwork.1072521562" name="Mix ARM/Thumb" superClass="com.atollic.truestudio.common_options.target.interwork" useByScannerDiscovery="false"/>
 								<inputType id="com.atollic.truestudio.as.input.317706373" name="Input" superClass="com.atollic.truestudio.as.input"/>
@@ -43,8 +44,8 @@
 									<listOptionValue builtIn="false" value="STM32L151xE"/>
 								</option>
 								<option id="com.atollic.truestudio.gcc.directories.select.1867407641" name="Include path" superClass="com.atollic.truestudio.gcc.directories.select" useByScannerDiscovery="false" valueType="includePath">
-									<listOptionValue builtIn="false" value="../src"/>
-									<listOptionValue builtIn="false" value="../inc"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/GolfSerialLoader/SerialLoader/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/GolfSerialLoader/inc}&quot;"/>
 								</option>
 								<option id="com.atollic.truestudio.common_options.target.endianess.985933216" name="Endianess" superClass="com.atollic.truestudio.common_options.target.endianess" useByScannerDiscovery="false"/>
 								<option id="com.atollic.truestudio.common_options.target.mcpu.635162903" name="Microcontroller" superClass="com.atollic.truestudio.common_options.target.mcpu" useByScannerDiscovery="false" value="STM32L151VE" valueType="enumerated"/>
@@ -135,7 +136,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -171,7 +172,8 @@
 								</option>
 								<option id="com.atollic.truestudio.as.general.incpath.823624950" name="Include path" superClass="com.atollic.truestudio.as.general.incpath" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="../inc"/>
-									<listOptionValue builtIn="false" value="../src"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/GolfSerialLoader/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/GolfSerialLoader/SerialLoader/inc}&quot;"/>
 								</option>
 								<option id="com.atollic.truestudio.common_options.target.interwork.1534702119" name="Mix ARM/Thumb" superClass="com.atollic.truestudio.common_options.target.interwork"/>
 								<inputType id="com.atollic.truestudio.as.input.1864079377" name="Input" superClass="com.atollic.truestudio.as.input"/>
@@ -181,8 +183,8 @@
 									<listOptionValue builtIn="false" value="STM32L151xE"/>
 								</option>
 								<option id="com.atollic.truestudio.gcc.directories.select.1472978318" name="Include path" superClass="com.atollic.truestudio.gcc.directories.select" valueType="includePath">
-									<listOptionValue builtIn="false" value="../src"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/SerialLoader/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/GolfSerialLoader/SerialLoader/inc}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/GolfSerialLoader/inc}&quot;"/>
 								</option>
 								<option id="com.atollic.truestudio.common_options.target.endianess.842656772" name="Endianess" superClass="com.atollic.truestudio.common_options.target.endianess"/>
 								<option id="com.atollic.truestudio.common_options.target.mcpu.111710240" name="Microcontroller" superClass="com.atollic.truestudio.common_options.target.mcpu" value="STM32L151VE" valueType="enumerated"/>
@@ -200,7 +202,7 @@
 								<option id="com.atollic.truestudio.common_options.target.instr_set.1018309832" name="Instruction set" superClass="com.atollic.truestudio.common_options.target.instr_set" value="com.atollic.truestudio.common_options.target.instr_set.thumb2" valueType="enumerated"/>
 								<option id="com.atollic.truestudio.common_options.target.fpucore.254360942" name="FPU" superClass="com.atollic.truestudio.common_options.target.fpucore" value="com.atollic.truestudio.common_options.target.fpucore.None" valueType="enumerated"/>
 								<option id="com.atollic.truestudio.common_options.target.fpu.1713075396" name="Floating point" superClass="com.atollic.truestudio.common_options.target.fpu"/>
-								<option id="com.atollic.truestudio.ld.general.scriptfile.1141229923" name="Linker script" superClass="com.atollic.truestudio.ld.general.scriptfile" useByScannerDiscovery="false" value="../altos-loader.ld" valueType="string"/>
+								<option id="com.atollic.truestudio.ld.general.scriptfile.1141229923" name="Linker script" superClass="com.atollic.truestudio.ld.general.scriptfile" useByScannerDiscovery="false" value="../serial-loader.ld" valueType="string"/>
 								<option id="com.atollic.truestudio.ld.optimization.do_garbage.1662431013" name="Dead code removal " superClass="com.atollic.truestudio.ld.optimization.do_garbage" value="true" valueType="boolean"/>
 								<option id="com.atollic.truestudio.common_options.target.interwork.1397025592" name="Mix ARM/Thumb" superClass="com.atollic.truestudio.common_options.target.interwork"/>
 								<option id="com.atollic.truestudio.ld.general.nostartfiles.1628245071" name="Do not use standard start files" superClass="com.atollic.truestudio.ld.general.nostartfiles" useByScannerDiscovery="false" value="true" valueType="boolean"/>
@@ -247,7 +249,7 @@
 						</toolChain>
 					</folderInfo>
 					<sourceEntries>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="src"/>
+						<entry excluding="src" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
