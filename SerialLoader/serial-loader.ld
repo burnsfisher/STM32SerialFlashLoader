@@ -35,14 +35,16 @@ SECTIONS {
 		*(.interrupt)	/* Interrupt vectors */
 
 		. = ORIGIN(rom) + 0x100;
-
+/*
 		src/ao_romconfig.o(.romconfig*)
 		src/ao_product.o(.romconfig*)
+*/
 		*(.text*)	/* Executable code */
 		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
 		*(.rodata*)	/* Constants */
 	} > rom
 	__text_end__ = .;
+	__ramTextSrc = .;
 
 	/* Boot data which must live at the start of ram so that
 	 * the application and bootloader share the same addresses.
@@ -63,20 +65,18 @@ SECTIONS {
 	 * entirely understand this, but at least this appears
 	 * to work...
 	 */
-
-	.textram BLOCK(8): {
-		_start__ = .;
-		__text_ram_start__ = .;
-		*(.ramtext)
-		__text_ram_end = .;
-	} >ram AT>rom
+   .textRam BLOCK(8): {
+   __ramTextDst = .;
+   *(.ramtext)
+   __ramTextEnd = .;
+   } >ram AT>rom
 
 	/* Data -- relocated to RAM, but written to ROM
 	 * Also aligned to 8 bytes to agree with textram
 	 */
 	.data BLOCK(8): {
 		*(.data)	/* initialized data */
-		_end__ = .;
+		__ramCopyEnd = .;
 	} >ram AT>rom
 
 

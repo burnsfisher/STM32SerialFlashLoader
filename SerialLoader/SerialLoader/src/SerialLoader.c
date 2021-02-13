@@ -84,11 +84,10 @@ ao_arch_release_interrupts(void) {
 	asm("cpsie i");
 #endif
 }
-
-void __attribute__ ((section(".firsttext"),noinline))
-    SerialLoader(void)
+uint32_t SaveAcrossReset[4] __attribute__ ((section(".ERROR_RAM")));
+int __attribute__ ((section(".firsttext"),noinline))
+    main(void)
 {
-	extern uint32_t SaveAcrossReset[4];
 	char thisChar=0,prompt='o';
 	uint32_t minAddress =  0x08001000;
 	uint16_t *flashSize = (uint16_t *)0x1ff800cc;
@@ -96,7 +95,7 @@ void __attribute__ ((section(".firsttext"),noinline))
 
 	ResetExternalWatchdog();
 	ao_arch_block_interrupts();
-	CopyRamText();
+	//CopyRamText();
 	ao_clock_init();
 	InitRCC();
 	InitGPIO();
@@ -618,7 +617,18 @@ inline ao_boot_chain(uint32_t *base)
 		asm ("bx lr");
 	}
 }
+#if 0
+//Already done in ao_interrupt
 void inline CopyRamText(void){
+	/* Here is what was done right at the start of the altos loader--
+	 * 	Set interrupt vector table offset
+	stm_nvic.vto = (uint32_t) &stm_interrupt_vector;
+	memcpy(&_start__, &__text_end__, &_end__ - &_start__);
+	memset(&__bss_start__, '\0', &__bss_end__ - &__bss_start__);
+	main();
+	 *
+	 */
+
 	/*
 	 * We have some code in a segment called .ramtext which must be run out of RAM, not flash
 	 * (that's what the STM32 manual says).  It is linked such that it SHOULD be in RAM, but
@@ -647,4 +657,4 @@ void inline CopyRamText(void){
 		dataSegment[i] = dataImage[i];
 	}
 }
-
+#endif
