@@ -1,5 +1,6 @@
 /*
  * Copyright © 2012 Keith Packard <keithp@keithp.com>
+ *             2021 Burns Fisher <wb1fj@amsat.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

@@ -92,7 +92,6 @@ int //__attribute__ ((section(".firsttext"),noinline))
 	uint32_t minAddress =  0x08001000;
 	uint16_t *flashSize = (uint16_t *)0x1ff800cc;
 	uint32_t maxAddress = minAddress + ((*flashSize)*1024)-0x1000;
-	static uint32_t test=0xA5A5A5A5;
 	ResetExternalWatchdog();
 	ao_arch_block_interrupts();
 	ao_clock_init();
@@ -102,10 +101,12 @@ int //__attribute__ ((section(".firsttext"),noinline))
 #ifdef DEBUG
 	InitDbgUART(57600);
 #endif
+	GPIOSetOn_Alert(); //This actually silences it
 	GPIOSetOff_Led1();
 	GPIOSetOff_Led2();
 	GPIOSetOff_Led3();
 	GPIOSetOff_Led4();
+
 #ifdef DEBUG
 			dbgprintString("\n\rGOLF Serial Loader Debug Terminal\r\n");
 			dbgprintString("manufacturer  amsat.org\r\n");
@@ -118,12 +119,10 @@ int //__attribute__ ((section(".firsttext"),noinline))
 
 	while (true){ //Should be true
 		//dbgUART_Write(prompt);
-		uint32_t *pTest = &test;
 		thisChar = UART_Read(prompt);
 		prompt = 'o';
 		switch(thisChar){
 		case 'v':{
-			printHex32(*pTest);
 			printString("GOLF Serial Loader\r\n");
 			printString("manufacturer  amsat.org\r\n");
 			printString("flash-range   ");
@@ -248,7 +247,6 @@ int //__attribute__ ((section(".firsttext"),noinline))
 #endif
 				break;
 			}
-			GPIOSetOff_Alert();
 			for(i=0;i<=(STM_FLASH_PAGESIZE_WORDS);i++){
 				word = 0;
 				for(j=0;j<4;j++){ // Bytes in a word
@@ -323,7 +321,16 @@ int //__attribute__ ((section(".firsttext"),noinline))
 }
 
 
+bool UmbilicalAttached(void){
+	/*
+	 * Enable the GPIO for attached and check it for being set
+	 */
+	stm_rcc.ahbenr |= (1 << GPIOAttachedPortEnable);
+	stm_moder_set((struct stm_gpio *)GPIOAttachedPort,GPIOAttachedPinNum,STM_MODER_INPUT);
+	stm_pupdr_set((struct stm_gpio *)GPIOAttachedPort,GPIOAttachedPinNum,STM_PUPDR_PULL_DOWN);
 
+	return (GPIORead_UmbilicalAttached() != 0);
+}
 
 /*
  * You might call the following stuff the USART Driver.  It all runs on programmed I/O, no interrupts.
@@ -368,9 +375,6 @@ void InitGPIO(void){
 	stm_otyper_set((struct stm_gpio *)GPIOWDResetPort,GPIOWDResetPinNum,STM_OTYPER_PUSH_PULL);
 	stm_ospeedr_set((struct stm_gpio *)GPIOWDResetPort,GPIOWDResetPinNum,STM_OSPEEDR_400kHz);
 	stm_pupdr_set((struct stm_gpio *)GPIOWDResetPort,GPIOWDResetPinNum,STM_PUPDR_NONE);
-
-	stm_moder_set((struct stm_gpio *)GPIOAttachedPort,GPIOAttachedPinNum,STM_MODER_INPUT);
-	stm_pupdr_set((struct stm_gpio *)GPIOAttachedPort,GPIOAttachedPinNum,STM_PUPDR_PULL_DOWN);
 
 
 	stm_moder_set((struct stm_gpio *)GPIOLed1Port,GPIOLed1PinNum,STM_MODER_OUTPUT);

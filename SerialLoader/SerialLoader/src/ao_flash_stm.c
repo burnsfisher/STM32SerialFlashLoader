@@ -67,16 +67,6 @@ ao_flash_wait_bsy(void)
 	while (stm_flash.sr & (1 << STM_FLASH_SR_BSY))
 		;
 }
-static void
-_bf_flash_erase_page(uint32_t *page)
-{
-	uint32_t *myPage = page;
-	stm_flash.pecr |= (1 << STM_FLASH_PECR_ERASE) | (1 << STM_FLASH_PECR_PROG);
-
-	*myPage = 0x00000000;
-
-	ao_flash_wait_bsy();
-}
 
 static void __attribute__ ((section(".ramtext"),noinline))
 _ao_flash_erase_page(uint32_t *page)

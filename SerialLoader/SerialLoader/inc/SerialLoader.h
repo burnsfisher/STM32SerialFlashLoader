@@ -8,6 +8,7 @@
 #ifndef AMSAT_TESTLOADER_INC_SERIALLOADER_H_
 #define AMSAT_TESTLOADER_INC_SERIALLOADER_H_
 
-void SerialLoader(uint32_t test);
+void main(void);
+bool UmbilicalAttached(void);
 
 #endif /* AMSAT_TESTLOADER_INC_SERIALLOADER_H_ */
