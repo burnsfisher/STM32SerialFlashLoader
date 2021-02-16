@@ -25,9 +25,49 @@
 extern void main(void);
 extern char __stack__;
 extern char __bss_start__, __bss_end__;
-extern char __ramTextDst,__ramTextSrc,__ramCopyEnd;
-void
-ao_panic(uint8_t reason)
+//extern char __ramTextDst,__ramTextSrc,__ramCopyEnd;
+
+void CopyRamText(void){
+	/* Here is what was done right at the start of the altos loader--
+	 * 	Set interrupt vector table offset
+	stm_nvic.vto = (uint32_t) &stm_interrupt_vector;
+	memcpy(&_start__, &__text_end__, &_end__ - &_start__);
+	memset(&__bss_start__, '\0', &__bss_end__ - &__bss_start__);
+	main();
+	 *
+	 */
+
+	/*
+	 * We have some code in a segment called .ramtext which must be run out of RAM, not flash
+	 * (that's what the STM32 manual says).  It is linked such that it SHOULD be in RAM, but
+	 * in fact it is loaded into flash.  This code copies it from flash to RAM using variables
+	 * that the linker script conveniently puts there for us.
+	 */
+	int i;
+	extern uint32_t __ramTextSrc;
+	extern uint32_t __ramCopyEnd;
+	extern uint32_t __ramTextDst;
+	/*
+	 * It's easier to make these look like an array, so we'll do that.
+	 */
+	uint8_t *dataSegment;		/* Start of RAM location of the text */
+	uint8_t *dataSegEnd;		/* End RAM location of the text */
+	uint8_t *dataImage;			/* ROM  location to copy init data from */
+	dataSegment = (uint8_t*)(&__ramTextDst);
+	dataSegEnd  = (uint8_t*)(&__ramCopyEnd);
+	dataImage   = (uint8_t*)(&__ramTextSrc);
+
+	/*
+	 * Now copy it.  We would use memcpy but we don't really want to have more code
+	 * hanging around.
+	 */
+	for (i=0;i<(dataSegEnd-dataSegment);i++){
+		dataSegment[i] = dataImage[i];
+	}
+}
+
+
+void ao_panic(uint8_t reason)
 {
 	(void) reason;
 }
@@ -92,7 +132,8 @@ void start(void)
 #endif
 	/* Set interrupt vector table offset */
 	stm_nvic.vto = (uint32_t) &stm_interrupt_vector;
-	memcpy(&__ramTextDst, &__ramTextSrc, &__ramCopyEnd - &__ramTextSrc);
+	//memcpy(&__ramTextDst, &__ramTextSrc, &__ramCopyEnd - &__ramTextSrc);
+	CopyRamText();
 	memset(&__bss_start__, '\0', &__bss_end__ - &__bss_start__);
 	main();
 }

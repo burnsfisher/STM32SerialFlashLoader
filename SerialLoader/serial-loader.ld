@@ -18,7 +18,10 @@
 
 MEMORY {
 	rom : ORIGIN = 0x08000000, LENGTH = 5K
-	ram : ORIGIN = 0x20000000, LENGTH = 16K
+	ram : ORIGIN = 0x20000000, LENGTH = 32K
+	Save : ORIGIN = 0x2000c000-64, LENGTH = 64
+/*	ErrorData : ORIGIN = 0x2000C000-64, LENGTH = 64
+	*/
 }
 
 INCLUDE ../registers.ld
@@ -55,7 +58,7 @@ SECTIONS {
 		*(.boot)
 		__boot_end__ = .;
 	} >ram
-
+	
 	/* Functions placed in RAM (required for flashing)
 	 *
 	 * Align to 8 bytes as that's what the ARM likes text
@@ -76,16 +79,20 @@ SECTIONS {
 	 */
 	.data BLOCK(8): {
 		*(.data)	/* initialized data */
-		__ramCopyEnd = .;
 	} >ram AT>rom
 
-
 	.bss : {
+		__ramCopyEnd = .;
 		__bss_start__ = .;
 		*(.bss)
 		*(COMMON)
 		__bss_end__ = .;
 	} >ram
+
+	  .ERROR_RAM (NOLOAD) : {
+  	*(.ERROR_RAM)
+    . = ALIGN(4);
+    } >Save
 
 	PROVIDE(__stack__ = ORIGIN(ram) + LENGTH(ram));
 	PROVIDE(end = .);

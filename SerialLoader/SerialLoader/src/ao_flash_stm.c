@@ -67,13 +67,24 @@ ao_flash_wait_bsy(void)
 	while (stm_flash.sr & (1 << STM_FLASH_SR_BSY))
 		;
 }
+static void
+_bf_flash_erase_page(uint32_t *page)
+{
+	uint32_t *myPage = page;
+	stm_flash.pecr |= (1 << STM_FLASH_PECR_ERASE) | (1 << STM_FLASH_PECR_PROG);
+
+	*myPage = 0x00000000;
+
+	ao_flash_wait_bsy();
+}
 
 static void __attribute__ ((section(".ramtext"),noinline))
 _ao_flash_erase_page(uint32_t *page)
 {
+	uint32_t *myPage = page;
 	stm_flash.pecr |= (1 << STM_FLASH_PECR_ERASE) | (1 << STM_FLASH_PECR_PROG);
 
-	*page = 0x00000000;
+	*myPage = 0x00000000;
 
 	ao_flash_wait_bsy();
 }
@@ -81,10 +92,10 @@ _ao_flash_erase_page(uint32_t *page)
 void
 ao_flash_erase_page(uint32_t *page)
 {
-	//ao_arch_block_interrupts();
 	ao_flash_pecr_unlock();
 	ao_flash_pgr_unlock();
 	_ao_flash_erase_page(page);
+	//_bf_flash_erase_page(page);
 	ao_flash_lock();
 }
 

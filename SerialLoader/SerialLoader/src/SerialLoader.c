@@ -85,17 +85,16 @@ ao_arch_release_interrupts(void) {
 #endif
 }
 uint32_t SaveAcrossReset[4] __attribute__ ((section(".ERROR_RAM")));
-int __attribute__ ((section(".firsttext"),noinline))
+int //__attribute__ ((section(".firsttext"),noinline))
     main(void)
 {
 	char thisChar=0,prompt='o';
 	uint32_t minAddress =  0x08001000;
 	uint16_t *flashSize = (uint16_t *)0x1ff800cc;
 	uint32_t maxAddress = minAddress + ((*flashSize)*1024)-0x1000;
-
+	static uint32_t test=0xA5A5A5A5;
 	ResetExternalWatchdog();
 	ao_arch_block_interrupts();
-	//CopyRamText();
 	ao_clock_init();
 	InitRCC();
 	InitGPIO();
@@ -117,25 +116,27 @@ int __attribute__ ((section(".firsttext"),noinline))
 #endif
 
 
-	while (true){
+	while (true){ //Should be true
 		//dbgUART_Write(prompt);
+		uint32_t *pTest = &test;
 		thisChar = UART_Read(prompt);
 		prompt = 'o';
 		switch(thisChar){
 		case 'v':{
+			printHex32(*pTest);
 			printString("GOLF Serial Loader\r\n");
 			printString("manufacturer  amsat.org\r\n");
 			printString("flash-range   ");
 			printHex32(minAddress); printString(" "); printHex32(maxAddress); printString("\r\n");
 			printString("Product       GolfSerialLoader\r\n");
-			printString("Version       0.5\r\n");
+			printString("Version       0.6\r\n");
 #ifdef DEBUG
 			dbgprintString("\n\rGOLF Serial Loader Debug Terminal\r\n");
 			dbgprintString("manufacturer  amsat.org\r\n");
 			dbgprintString("flash-range   ");
 			dbgprintHex32(minAddress); dbgprintString(" "); dbgprintHex32(maxAddress); dbgprintString("\r\n");
 			dbgprintString("Product       GolfSerialLoader\r\n");
-			dbgprintString("Version       0.5\r\n");
+			dbgprintString("Version       0.6\r\n");
 #endif
 
 			break;

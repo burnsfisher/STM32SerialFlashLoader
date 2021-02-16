@@ -63,7 +63,7 @@
 								<option id="com.atollic.truestudio.common_options.target.instr_set.1479000259" name="Instruction set" superClass="com.atollic.truestudio.common_options.target.instr_set" value="com.atollic.truestudio.common_options.target.instr_set.thumb2" valueType="enumerated"/>
 								<option id="com.atollic.truestudio.common_options.target.fpucore.289348687" name="FPU" superClass="com.atollic.truestudio.common_options.target.fpucore" value="com.atollic.truestudio.common_options.target.fpucore.None" valueType="enumerated"/>
 								<option id="com.atollic.truestudio.common_options.target.fpu.1876547389" name="Floating point" superClass="com.atollic.truestudio.common_options.target.fpu"/>
-								<option id="com.atollic.truestudio.ld.general.scriptfile.2147047993" name="Linker script" superClass="com.atollic.truestudio.ld.general.scriptfile" useByScannerDiscovery="false" value="../altos-loader.ld" valueType="string"/>
+								<option id="com.atollic.truestudio.ld.general.scriptfile.2147047993" name="Linker script" superClass="com.atollic.truestudio.ld.general.scriptfile" useByScannerDiscovery="false" value="../serial-loader.ld" valueType="string"/>
 								<option id="com.atollic.truestudio.ld.optimization.do_garbage.914179324" name="Dead code removal " superClass="com.atollic.truestudio.ld.optimization.do_garbage" value="true" valueType="boolean"/>
 								<option id="com.atollic.truestudio.common_options.target.interwork.2123264508" name="Mix ARM/Thumb" superClass="com.atollic.truestudio.common_options.target.interwork"/>
 								<option id="com.atollic.truestudio.ld.general.nostdlib.213097442" name="No startup or default libs" superClass="com.atollic.truestudio.ld.general.nostdlib" useByScannerDiscovery="false" value="true" valueType="boolean"/>
