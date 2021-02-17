@@ -607,6 +607,8 @@ void printHex32(uint32_t number){
 		UART_Write(character);
 	}
 }
+#if 0
+//Already done in ao_boot_chain.c
 void
 inline ao_boot_chain(uint32_t *base)
 {
@@ -622,7 +624,7 @@ inline ao_boot_chain(uint32_t *base)
 		asm ("bx lr");
 	}
 }
-#if 0
+
 //Already done in ao_interrupt
 void inline CopyRamText(void){
 	/* Here is what was done right at the start of the altos loader--

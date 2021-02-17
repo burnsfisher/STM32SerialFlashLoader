@@ -18,7 +18,7 @@
 
 #ifndef _AO_BOOT_H_
 #define _AO_BOOT_H_
-
+#include "stdbool.h"
 void
 ao_boot_chain(uint32_t *base);
 
@@ -27,7 +27,7 @@ int
 ao_boot_check_pin(void);
 
 /* Return true to switch to application (if present) */
-int
+bool
 ao_boot_check_chain(void);
 
 void

@@ -46,17 +46,25 @@ struct ao_boot {
 
 static struct ao_boot __attribute__ ((section(".boot"))) ao_boot;
 	
-int
+bool
 ao_boot_check_chain(void)
 {
+	/*
+	 * If the appropriate constants are in signal and check then we look in base.
+	 * If base is non-0, that's where we go to start a program.  If it is 0, then
+	 * we return and start the loader regardless of attached.
+	 *
+	 * If the constants are not there, we pay attention only to attached to decide
+	 * whether to start the loader
+	 */
 	if (ao_boot.signal == AO_BOOT_SIGNAL && ao_boot.check == AO_BOOT_CHECK) {
 		ao_boot.signal = 0;
 		ao_boot.check = 0;
 		if (ao_boot.base == AO_BOOT_FORCE_LOADER)
-			return 0;
+			return false; //Start the loader regardless
 		ao_boot_chain(ao_boot.base);
 	}
-	return 1;
+	return true; // Use attached to decide whether to start the loader
 }
 
 void

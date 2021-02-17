@@ -87,9 +87,15 @@ const void *stm_interrupt_vector[];
 
 void start(void)
 {
-	if(!UmbilicalAttached()){
-		ao_boot_chain(AO_BOOT_APPLICATION_BASE);
+	if(ao_boot_check_chain()){
+		if(!UmbilicalAttached()){
+			ao_boot_chain(AO_BOOT_APPLICATION_BASE);
+		}
 	}
+	/* We get here if memory cells are set to one set of magic values (boot_check_chain)
+	 * or if the attached line is high.  This is where we start the loader
+	 */
+
 	/* Set interrupt vector table offset */
 	stm_nvic.vto = (uint32_t) &stm_interrupt_vector;
 	//memcpy(&__ramTextDst, &__ramTextSrc, &__ramCopyEnd - &__ramTextSrc);
