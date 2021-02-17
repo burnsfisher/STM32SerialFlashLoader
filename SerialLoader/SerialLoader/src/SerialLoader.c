@@ -102,11 +102,12 @@ int //__attribute__ ((section(".firsttext"),noinline))
 	InitDbgUART(57600);
 #endif
 	GPIOSetOn_Alert(); //This actually silences it
+#if 0
 	GPIOSetOff_Led1();
 	GPIOSetOff_Led2();
 	GPIOSetOff_Led3();
 	GPIOSetOff_Led4();
-
+#endif
 #ifdef DEBUG
 			dbgprintString("\n\rGOLF Serial Loader Debug Terminal\r\n");
 			dbgprintString("manufacturer  amsat.org\r\n");
@@ -376,7 +377,7 @@ void InitGPIO(void){
 	stm_ospeedr_set((struct stm_gpio *)GPIOWDResetPort,GPIOWDResetPinNum,STM_OSPEEDR_400kHz);
 	stm_pupdr_set((struct stm_gpio *)GPIOWDResetPort,GPIOWDResetPinNum,STM_PUPDR_NONE);
 
-
+#if 0
 	stm_moder_set((struct stm_gpio *)GPIOLed1Port,GPIOLed1PinNum,STM_MODER_OUTPUT);
 	stm_otyper_set((struct stm_gpio *)GPIOLed1Port,GPIOLed1PinNum,STM_OTYPER_PUSH_PULL);
 	stm_ospeedr_set((struct stm_gpio *)GPIOLed1Port,GPIOLed1PinNum,STM_OSPEEDR_400kHz);
@@ -396,6 +397,7 @@ void InitGPIO(void){
 	stm_otyper_set((struct stm_gpio *)GPIOLed4Port,GPIOLed4PinNum,STM_OTYPER_PUSH_PULL);
 	stm_ospeedr_set((struct stm_gpio *)GPIOLed4Port,GPIOLed4PinNum,STM_OSPEEDR_400kHz);
 	stm_pupdr_set((struct stm_gpio *)GPIOLed4Port,GPIOLed4PinNum,STM_PUPDR_NONE);
+#endif
 	/*
 	 * Setup External IHU RF Control GPIO
 	 */
@@ -411,13 +413,13 @@ void InitGPIO(void){
 	stm_otyper_set((struct stm_gpio *)GPIOAlertPort,GPIOAlertPinNum,STM_OTYPER_PUSH_PULL);
 	stm_ospeedr_set((struct stm_gpio *)GPIOAlertPort,GPIOAlertPinNum,STM_OSPEEDR_400kHz);
 	stm_pupdr_set((struct stm_gpio *)GPIOAlertPort,GPIOAlertPinNum,STM_PUPDR_NONE);
-
+#if 0
 	/*
 	 * Setup Tx Antenna Sense GPIO
 	 */
 	stm_moder_set((struct stm_gpio *)GPIOTxDeploySnsPort,GPIOTxDeploySnsPinNum,STM_MODER_INPUT);
 	stm_pupdr_set((struct stm_gpio *)GPIOTxDeploySnsPort,GPIOTxDeploySnsPinNum,STM_PUPDR_PULL_UP);
-
+#endif
 
 }
 
