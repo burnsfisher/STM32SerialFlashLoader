@@ -102,6 +102,7 @@ int //__attribute__ ((section(".firsttext"),noinline))
 	InitDbgUART(57600);
 #endif
 	GPIOSetOn_Alert(); //This actually silences it
+	GPIOSetOff_Led1();
 #if 0
 	GPIOSetOff_Led1();
 	GPIOSetOff_Led2();
@@ -129,7 +130,7 @@ int //__attribute__ ((section(".firsttext"),noinline))
 			printString("flash-range   ");
 			printHex32(minAddress); printString(" "); printHex32(maxAddress); printString("\r\n");
 			printString("Product       GolfSerialLoader\r\n");
-			printString("Version       0.6\r\n");
+			printString("Version       1.0\r\n");
 #ifdef DEBUG
 			dbgprintString("\n\rGOLF Serial Loader Debug Terminal\r\n");
 			dbgprintString("manufacturer  amsat.org\r\n");
@@ -243,6 +244,7 @@ int //__attribute__ ((section(".firsttext"),noinline))
 			if(((uint32_t)addr>=minAddress) && ((uint32_t)addr<maxAddress)){
 				//dbgprintString("Addr Ok ");dbgprintHex32(minAddress);dbgprintHex32(maxAddress);
 			} else {
+				GPIOSetOn_Led1(); // Signal an error
 #ifdef DEBUG
 				dbgprintString("Addr bad ");dbgprintHex32(minAddress);dbgprintHex32(maxAddress);
 #endif
@@ -377,12 +379,12 @@ void InitGPIO(void){
 	stm_ospeedr_set((struct stm_gpio *)GPIOWDResetPort,GPIOWDResetPinNum,STM_OSPEEDR_400kHz);
 	stm_pupdr_set((struct stm_gpio *)GPIOWDResetPort,GPIOWDResetPinNum,STM_PUPDR_NONE);
 
-#if 0
+// Enable LED 1 (red) so we can signal a checksum error
 	stm_moder_set((struct stm_gpio *)GPIOLed1Port,GPIOLed1PinNum,STM_MODER_OUTPUT);
 	stm_otyper_set((struct stm_gpio *)GPIOLed1Port,GPIOLed1PinNum,STM_OTYPER_PUSH_PULL);
 	stm_ospeedr_set((struct stm_gpio *)GPIOLed1Port,GPIOLed1PinNum,STM_OSPEEDR_400kHz);
 	stm_pupdr_set((struct stm_gpio *)GPIOLed1Port,GPIOLed1PinNum,STM_PUPDR_NONE);
-
+#if 0
 	stm_moder_set((struct stm_gpio *)GPIOLed2Port,GPIOLed2PinNum,STM_MODER_OUTPUT);
 	stm_otyper_set((struct stm_gpio *)GPIOLed2Port,GPIOLed2PinNum,STM_OTYPER_PUSH_PULL);
 	stm_ospeedr_set((struct stm_gpio *)GPIOLed2Port,GPIOLed2PinNum,STM_OSPEEDR_400kHz);
