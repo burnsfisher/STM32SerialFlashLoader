@@ -21,7 +21,7 @@
 
 #include <stdio.h>
 #include <stm32l.h>
-
+#include <Addresses.h>
 /*
  * STM32L definitions and code fragments for AltOS
  */
@@ -116,9 +116,10 @@ ao_adc_init(void);
 /* ADC maximum reported value */
 #define AO_ADC_MAX			4095
 
-#define AO_BOOT_APPLICATION_BASE	((uint32_t *) 0x08001000)
+//#define AO_BOOT_APPLICATION_BASE	((uint32_t *) 0x08001000)
+#define AO_BOOT_APPLICATION_BASE	((uint32_t *) APPLICATION_BASE)
 
-#define AO_BOOT_APPLICATION_BOUND	((uint32_t *) (0x08000000 + stm_flash_size()))
+#define AO_BOOT_APPLICATION_BOUND	((uint32_t *) (APPLICATION_BOUND)
 #define AO_BOOT_LOADER_BASE		((uint32_t *) 0x08000000)
 #define HAS_BOOT_LOADER			1
 

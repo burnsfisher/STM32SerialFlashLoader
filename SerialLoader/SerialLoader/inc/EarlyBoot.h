@@ -24,9 +24,8 @@
 		stm_gpio_set((struct stm_gpio *)GPIOWDResetPort,GPIOWDResetPinNum,0);
 
 #define GPIORead_UmbilicalAttached() stm_gpio_get((struct stm_gpio *)GPIOAttachedPort,GPIOAttachedPinNum)
-//#define GPIORead_DeploySenseRx() stm_gpio_get((struct stm_gpio *)GPIORxDeploySnsPort,GPIORxDeploySnsPinNum)
-#define GPIORead_DeploySenseTx() stm_gpio_get((struct stm_gpio *)GPIOTxDeploySnsPort,GPIOTxDeploySnsPinNum)
-
+#define GPIORead_CmdBit0() stm_gpio_get((struct stm_gpio *)GPIOCmdDataPort,GPIOCmdDataPinNum)
+#define GPIORead_CmdBit1() stm_gpio_get((struct stm_gpio *)GPIOCmdDataPort,(GPIOCmdDataPinNum+1))
 //#define GPIOSetOn_AntDepTx() stm_gpio_set((struct stm_gpio *)GPIOTxAntDepPort,GPIOTxAntDepPinNum,1)
 //#define GPIOSetOff_AntDepTx() stm_gpio_set((struct stm_gpio *)GPIOTxAntDepPort,GPIOTxAntDepPinNum,0)
 //#define GPIOSetOn_AntDepRx() stm_gpio_set((struct stm_gpio *)GPIORxAntDepPort,GPIORxAntDepPinNum,1)

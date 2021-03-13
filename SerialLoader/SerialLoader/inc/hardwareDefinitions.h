@@ -343,6 +343,7 @@
 #define GPIOCmdDataPin				GPIO_Pin_0
 #define GPIOCmdDataPinNum			0
 #define GPIOCmdDataNumBits			4
+#define GPIOCmdDataPortEnable		STM_RCC_AHBENR_GPIOEEN
 
 /* For linear, it is Pass Band Enable */
 #define GPIOPBEnablePort			GPIOE
@@ -381,7 +382,6 @@
 #define GPIOCmdRxCDPort				GPIOD
 #define GPIOCmdRxCDPin				GPIO_Pin_15
 #define GPIOCmdRxCDPinNum			15
-
 
 /*
  * Below here are GPIO ports that can generate interrupts (as well as

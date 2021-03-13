@@ -9,7 +9,7 @@
  * It does not echo.  The commands are as follows:
  *
  * v  - Print info about the loader, version, and min/max addresses available
- * a  - Jump to the start of the code at address 0x1100
+ * a  - Jump to the start of the application code
  * W<hex address>\n Expects a page (0x100 bytes) of binary data to follow
  * R<hex address>\n Sends a page of binary data
  * X<hex address>\n Clear the specified page
@@ -23,6 +23,8 @@
 #include "ao_flash.h"
 #include "EarlyBoot.h"
 #include "stdbool.h"
+#include "SerialLoader.h"
+#include "Addresses.h"
 #define CLOCK_SPEED 32000000 // This is 32MHz
 //#define DEBUG
 #define TIMEOUT (0xff8000)
@@ -85,38 +87,22 @@ ao_arch_release_interrupts(void) {
 #endif
 }
 uint32_t SaveAcrossReset[4] __attribute__ ((section(".ERROR_RAM")));
-int //__attribute__ ((section(".firsttext"),noinline))
-    main(void)
+//__attribute__ ((section(".firsttext"),noinline))
+int main(void)
 {
 	char thisChar=0,prompt='o';
-	uint32_t minAddress =  0x08001000;
-	uint16_t *flashSize = (uint16_t *)0x1ff800cc;
-	uint32_t maxAddress = minAddress + ((*flashSize)*1024)-0x1000;
+	uint32_t minAddress =  APPLICATION_BASE; // See also AO_BOOT_APPLCIATION_BASE in ao_arch.h
+	//uint16_t *flashSize = (uint16_t *)0x1ff800cc;
+	//uint32_t maxAddress = minAddress + ((*flashSize)*1024)-0x1000;
+	uint32_t maxAddress = (uint32_t)APPLICATION_BOUND;
 	ResetExternalWatchdog();
 	ao_arch_block_interrupts();
 	ao_clock_init();
 	InitRCC();
 	InitGPIO();
 	InitUART(57600);
-#ifdef DEBUG
-	InitDbgUART(57600);
-#endif
 	GPIOSetOn_Alert(); //This actually silences it
 	GPIOSetOff_Led1();
-#if 0
-	GPIOSetOff_Led1();
-	GPIOSetOff_Led2();
-	GPIOSetOff_Led3();
-	GPIOSetOff_Led4();
-#endif
-#ifdef DEBUG
-			dbgprintString("\n\rGOLF Serial Loader Debug Terminal\r\n");
-			dbgprintString("manufacturer  amsat.org\r\n");
-			dbgprintString("flash-range   ");
-			dbgprintHex32(minAddress); dbgprintString(" "); dbgprintHex32(maxAddress); dbgprintString("\r\n");
-			dbgprintString("Product       GolfSerialLoader\r\n");
-			dbgprintString("Version       0.5\r\n");
-#endif
 
 
 	while (true){ //Should be true
@@ -131,70 +117,14 @@ int //__attribute__ ((section(".firsttext"),noinline))
 			printHex32(minAddress); printString(" "); printHex32(maxAddress); printString("\r\n");
 			printString("Product       GolfSerialLoader\r\n");
 			printString("Version       1.0\r\n");
-#ifdef DEBUG
-			dbgprintString("\n\rGOLF Serial Loader Debug Terminal\r\n");
-			dbgprintString("manufacturer  amsat.org\r\n");
-			dbgprintString("flash-range   ");
-			dbgprintHex32(minAddress); dbgprintString(" "); dbgprintHex32(maxAddress); dbgprintString("\r\n");
-			dbgprintString("Product       GolfSerialLoader\r\n");
-			dbgprintString("Version       0.6\r\n");
-#endif
 
 			break;
 		}
-#ifdef DEBUG
-		case 'q':{
-			uint32_t page[STM_FLASH_PAGESIZE_WORDS],*addr,checksum=0;
-			int i;
-			addr = (uint32_t *)0x08070000;
-			for(i=0;i<STM_FLASH_PAGESIZE_WORDS;i++){
-				//Otherwise, get the next word and add in the checksum
-				page[i]=addr[i];
-				checksum += page[i];
-				ResetExternalWatchdog();
-			}
-			printHex32(checksum); checksum=0;
-			printString(" is checksum for page read\n\r");
-
-			ao_flash_page(addr,page);
-			printString("Rewritten with checksum now \n\r");
-			for(i=0;i<STM_FLASH_PAGESIZE_WORDS;i++){
-				//Otherwise, get the next word and add in the checksum
-				checksum += addr[i];
-				printHex32(page[i]);printString(" ");printHex32(addr[i]); printString("\r\n");
-			}
-			printHex32(checksum); printString("\n\r");
-
-			break;
-		}
-		case 'r':{
-			uint32_t page[STM_FLASH_PAGESIZE_WORDS],*addr;
-			int i;
-			addr = (uint32_t *)0x08070000;
-			for(i=0;i<STM_FLASH_PAGESIZE_WORDS;i++){
-				//Otherwise, get the next word and add in the checksum
-				page[i]=(kindaRandom&0xFFFFFF00)+i;
-				ResetExternalWatchdog();
-			}
-
-			ao_flash_page(addr,page);
-			for(i=0;i<STM_FLASH_PAGESIZE_WORDS;i++){
-				if(i+1000 != addr[i]){
-					printString("No:");
-				}else{
-					printString("Ok:");
-				}
-				printHex32(page[i]);printString(" ");printHex32(addr[i]); printString("\r\n");
-
-			}
-			break;
-		}
-#endif
 		case 'a':{
 			SaveAcrossReset[0]=0; //Make sure we don't come back here
 			SaveAcrossReset[1]=0;
 			SaveAcrossReset[2]=0;
-			ao_boot_chain((uint32_t *)0x08001000);
+			ao_boot_chain((uint32_t *)APPLICATION_BASE);
 			break;
 		}
 		case 'R':{
@@ -204,9 +134,6 @@ int //__attribute__ ((section(".firsttext"),noinline))
 
 			addr = (volatile uint32_t *)readHex32();
 			//#define DEBUG
-#ifdef DEBUG
-			//dbgprintHex32((uint32_t)addr);
-#endif
 			if((uint32_t)addr>=minAddress && (uint32_t)addr<maxAddress){
 				for(i=0;i<=STM_FLASH_PAGESIZE_WORDS;i++){
 					if(i == STM_FLASH_PAGESIZE_WORDS){
@@ -217,9 +144,6 @@ int //__attribute__ ((section(".firsttext"),noinline))
 						value=addr[i];
 						checksum += value;
 					}
-#ifdef DEBUG
-					//dbgprintHex32(value);
-#endif
 					{
 						int j;
 						uint8_t *bytes = (uint8_t *)&value;
@@ -301,23 +225,6 @@ int //__attribute__ ((section(".firsttext"),noinline))
 			}
 			break;
 		}
-#ifdef DEBUG
-		case 'Z':{
-			void NVIC_SystemReset(void);
-			dbgprintString("Reset to usb loader\n\r");
-			GPIOSetOn_Led1();
-			SaveAcrossReset[0]=0;
-			SaveAcrossReset[1]=0;
-			SaveAcrossReset[2]=0;
-	        NVIC_SystemReset();
-			while(true){} // Wait for external watchdog to fire
-			break;
-		}
-		default:{
-			dbgprintString("Unknown command\n\r");
-			break;
-		}
-#endif
 		}
 	}
 
@@ -328,11 +235,19 @@ bool UmbilicalAttached(void){
 	/*
 	 * Enable the GPIO for attached and check it for being set
 	 */
+	bool notCode3;
 	stm_rcc.ahbenr |= (1 << GPIOAttachedPortEnable);
 	stm_moder_set((struct stm_gpio *)GPIOAttachedPort,GPIOAttachedPinNum,STM_MODER_INPUT);
 	stm_pupdr_set((struct stm_gpio *)GPIOAttachedPort,GPIOAttachedPinNum,STM_PUPDR_PULL_DOWN);
 
-	return (GPIORead_UmbilicalAttached() != 0);
+	stm_rcc.ahbenr |= (1 << GPIOCmdDataPortEnable);
+	stm_moder_set((struct stm_gpio *)GPIOCmdDataPort,GPIOCmdDataPinNum,STM_MODER_INPUT);
+	stm_pupdr_set((struct stm_gpio *)GPIOCmdDataPort,GPIOCmdDataPinNum,STM_PUPDR_NONE);
+
+	stm_moder_set((struct stm_gpio *)GPIOCmdDataPort,(GPIOCmdDataPinNum+1),STM_MODER_INPUT);
+	stm_pupdr_set((struct stm_gpio *)GPIOCmdDataPort,(GPIOCmdDataPinNum+1),STM_PUPDR_NONE);
+	notCode3 = (GPIORead_CmdBit0()==1) || (GPIORead_CmdBit1() == 0); // Not code 2 on the command lines
+	return (GPIORead_UmbilicalAttached() != 0) && notCode3;
 }
 
 /*
@@ -368,11 +283,6 @@ void InitGPIO(void){
 	/*
 	 * Here we are setting up the GPIOs for whatever we need
 	 */
-#define GPIOTxDeploySnsPort			GPIOC /* This is Sense 1, -Y */
-#define GPIOTxDeploySnsPin			GPIO_Pin_0
-#define GPIOTxDeploySnsPinNum			0
-#define GPIOTxDeploySnsPortEnable	STM_RCC_AHBENR_GPIOCEN /* Used for attached, and antenna sense */
-
 
 	stm_moder_set((struct stm_gpio *)GPIOWDResetPort,GPIOWDResetPinNum,STM_MODER_OUTPUT);
 	stm_otyper_set((struct stm_gpio *)GPIOWDResetPort,GPIOWDResetPinNum,STM_OTYPER_PUSH_PULL);
@@ -415,13 +325,24 @@ void InitGPIO(void){
 	stm_otyper_set((struct stm_gpio *)GPIOAlertPort,GPIOAlertPinNum,STM_OTYPER_PUSH_PULL);
 	stm_ospeedr_set((struct stm_gpio *)GPIOAlertPort,GPIOAlertPinNum,STM_OSPEEDR_400kHz);
 	stm_pupdr_set((struct stm_gpio *)GPIOAlertPort,GPIOAlertPinNum,STM_PUPDR_NONE);
-#if 0
+
 	/*
-	 * Setup Tx Antenna Sense GPIO
+	 * This lets us turn off the contingency transmitter while we are here
 	 */
-	stm_moder_set((struct stm_gpio *)GPIOTxDeploySnsPort,GPIOTxDeploySnsPinNum,STM_MODER_INPUT);
-	stm_pupdr_set((struct stm_gpio *)GPIOTxDeploySnsPort,GPIOTxDeploySnsPinNum,STM_PUPDR_PULL_UP);
-#endif
+	stm_moder_set((struct stm_gpio *)GPIOIhuRfPort,GPIOIhuRfPinNum,STM_MODER_OUTPUT);
+	stm_otyper_set((struct stm_gpio *)GPIOIhuRfPort,GPIOIhuRfPinNum,STM_OTYPER_PUSH_PULL);
+	stm_ospeedr_set((struct stm_gpio *)GPIOIhuRfPort,GPIOIhuRfPinNum,STM_OSPEEDR_400kHz);
+	stm_pupdr_set((struct stm_gpio *)GPIOIhuRfPort,GPIOIhuRfPinNum,STM_PUPDR_NONE);
+
+
+
+#define GPIOIhuRfPort				GPIOE
+#define GPIOIhuRfPin				GPIO_Pin_12
+#define GPIOIhuRfPinNum				12
+#define GPIOCmdDataPort				GPIOE
+#define GPIOCmdDataPin				GPIO_Pin_0
+#define GPIOCmdDataPinNum			0
+#define GPIOCmdDataNumBits			4
 
 }
 
